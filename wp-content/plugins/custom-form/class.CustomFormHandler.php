@@ -54,7 +54,7 @@ class CustomFormException extends Exception {};
             try{
                 wp_enqueue_script('form-processor');
                 ob_start();
-                include_once('_custom_form.php');
+                include_once('_form.php');
                 return ob_get_clean();
             }
             catch(Exception $error){
