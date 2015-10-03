@@ -18,9 +18,12 @@ class CustomFormException extends Exception {};
         private $db;
         public function __construct() {
             add_shortcode('customform', array(&$this, 'render_form'));
+            
             wp_register_script('form-processor', plugins_url('/js/formProcessor.js', __FILE__), false);
             add_action('wp_ajax_add_submission', array(&$this, 'add_submission'));
             add_action('wp_ajax_nopriv_add_submission', array(&$this, 'add_submission'));
+            
+            add_action( 'admin_menu', array(&$this, 'add_submissions_menu' ));
             global $wpdb;
             $this->db = $wpdb;
             
@@ -67,6 +70,15 @@ class CustomFormException extends Exception {};
             if($_POST['add_submission']) $result = $this->db->insert('submissions', $_POST['add_submission']);
             $response = ($result)? array('success' => $_POST['add_submission']): array('failiure' => 'could not save data');
             die(json_encode($response));
+        }
+        
+        public function add_submissions_menu() {
+            add_menu_page( 'Submissions', 'Submissions', 'edit_pages', 'submissions', array(&$this,'submissions') );
+        }
+        
+        public function submissions() {
+            $submissions = $this->db->get_results("SELECT * FROM `submissions`");
+            include_once('_submissions_page.php');
         }
         
         public function uninstall() {
