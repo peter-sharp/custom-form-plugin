@@ -20,6 +20,9 @@ class CustomFormException extends Exception {};
             add_shortcode('customform', array(&$this, 'render_form'));
             
             wp_register_script('form-processor', plugins_url('/js/formProcessor.js', __FILE__), false);
+            wp_register_script('info-extender', plugins_url('/js/infoExtender.js', __FILE__), false);
+            
+            wp_register_style('submissions-style', plugins_url('/css/submissions.css', __FILE__), false);
             add_action('wp_ajax_add_submission', array(&$this, 'add_submission'));
             add_action('wp_ajax_nopriv_add_submission', array(&$this, 'add_submission'));
             
@@ -78,6 +81,8 @@ class CustomFormException extends Exception {};
         
         public function submissions() {
             $submissions = $this->db->get_results("SELECT * FROM `submissions`");
+            wp_enqueue_style('submissions-style');
+            wp_enqueue_script('info-extender');
             include_once('_submissions_page.php');
         }
         
